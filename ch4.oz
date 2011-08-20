@@ -21,7 +21,9 @@ fun lazy {LMap Xs F}
    end
 end
 
-
+% I was unable to write a reduce that could match the last element and simply
+% return it, even if the last element was a list. It would always match that list
+% as a pair? May have to play around to make it work but its not important now. 
 declare
 fun {Reduce Xs F E}
    case Xs
