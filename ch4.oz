@@ -1,60 +1,7 @@
 % 17. Hamming Problem
 
-declare
-fun {HammingNumbers K}
-   local Hams in
-      Hams = 1|{Reduce {GenMultLists K Hams} Merge nil}
-   end
-end
 
-declare Hams = {HammingNumbers 3}
-{Browse Hams}
-{Touch 20 Hams}
-
-declare
-fun lazy {Merge Xs Ys}
-   case Xs#Ys
-   of (X|Xr)#(Y|Yr) then
-      if X < Y then
-	 X|{Merge Xr Ys}
-      elseif Y < X then
-	 Y|{Merge Xs Yr}
-      else
-	 X|{Merge Xr Yr}
-      end
-   [] X#nil then X
-   [] nil#Y then Y
-   end
-end
-
-declare
-fun lazy {Fives Xs}
-   case Xs of X|Xr then (5 * X)|{Fives Xr} end
-end
-
-declare
-fun lazy {Sixes Xs}
-   case Xs of X|Xr then (6 * X)|{Sixes Xr} end
-end
-
-declare
-fun {GenMultLists K Hams}
-   if K > 1 then
-      {GenMultiples K Hams}|{GenMultLists K-1 Hams}
-   else
-      nil
-   end
-end
-
-%-------------------
-
-declare
-fun lazy {GenMultiples N Hams}
-   {LMap Hams fun {$ X} X*N end}
-end
-
-%-------------------
-
+%--------Util FNs-------
 declare
 proc {Touch N Xs}
    if N > 0 then
@@ -83,12 +30,45 @@ fun {Reduce Xs F E}
    end
 end
 
+%-------------------
 
 declare
-fun {Reduce Xs F}
-   case Xs
-   of nil then nil
-   [] (X|Xl)|(Xr|Xlr) then{F (X|Xl) {Reduce (Xr|Xrl) F}}
-   [] X then X
+fun lazy {GenMultiples N Hams}
+   {LMap Hams fun {$ X} X*N end}
+end
+
+declare
+fun {GenMultLists K Hams}
+   if K > 1 then
+      {GenMultiples K Hams}|{GenMultLists K-1 Hams}
+   else
+      nil
    end
 end
+
+declare
+fun lazy {Merge Xs Ys}
+   case Xs#Ys
+   of (X|Xr)#(Y|Yr) then
+      if X < Y then
+	 X|{Merge Xr Ys}
+      elseif Y < X then
+	 Y|{Merge Xs Yr}
+      else
+	 X|{Merge Xr Yr}
+      end
+   [] X#nil then X
+   [] nil#Y then Y
+   end
+end
+
+declare
+fun {HammingNumbers K}
+   local Hams in
+      Hams = 1|{Reduce {GenMultLists K Hams} Merge nil}
+   end
+end
+
+declare Hams = {HammingNumbers 3}
+{Browse Hams}
+{Touch 20 Hams}
