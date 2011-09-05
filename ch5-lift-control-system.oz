@@ -1,4 +1,18 @@
 declare
+fun {NewPortObject Init Fun}
+   Sin Sout in
+   thread {FoldL Sin Fun Init Sout} end
+   {NewPort Sin}
+end
+
+declare
+fun {NewPortObject2 Proc}
+   Sin in
+   thread for Msg in Sin do {Proc Msg} end end
+   {NewPort Sin}
+end
+
+declare
 fun {Timer}
    {NewPortObject2
     proc {$ Msg}
@@ -119,4 +133,20 @@ fun {Lift Num Init Cid Floors}
           end
        end
     end}
+end
+
+fun {LiftShaft I state(F S M) Floors}
+   Cid={Controller state(stopped F Lid)}
+   Lid={Lift I state(F S M) Cid Floors}
+in Lid end
+
+proc {Building FN LN ?Floors ?Lifts}
+   Lifts={MakeTuple lifts LN}
+   for I in 1..LN do 
+      Lifts.I={LiftShaft I state(1 nil false) Floors}
+   end
+   Floors={MakeTuple floors FN}
+   for I in 1..FN do
+      Floors.I={Floor I state(notcalled) Lifts}
+   end
 end
